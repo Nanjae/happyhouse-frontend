@@ -1,10 +1,12 @@
 <template>
   <div>
     <div class="wrapper" @mouseover="overButton" @mouseout="outButton">
-      <div
-        class="header_btn_bg"
-        v-bind:style="{ opacity: computedOpacity }"
-      ></div>
+      <div class="header_btn_bg" v-bind:style="{ opacity: getOpacity }"></div>
+      <img
+        class="header_btn_img"
+        v-if="buttonImg != ''"
+        :src="require(`@/assets/icons/${buttonImg}`)"
+      />
       {{ buttonName }}
     </div>
   </div>
@@ -13,23 +15,24 @@
 export default {
   data() {
     return {
-      opacity: 0,
+      style: { opacity: 0 },
     };
   },
   props: {
     buttonName: String,
+    buttonImg: { type: String, default: "" },
   },
   computed: {
-    computedOpacity() {
-      return this.opacity;
+    getOpacity() {
+      return this.style.opacity;
     },
   },
   methods: {
-    overButton: function() {
-      this.opacity = 0.1;
+    overButton() {
+      this.style.opacity = 0.1;
     },
-    outButton: function() {
-      this.opacity = 0;
+    outButton() {
+      this.style.opacity = 0;
     },
   },
 };
@@ -53,5 +56,9 @@ export default {
   width: 100%;
   height: 100%;
   transition: opacity 0.4s;
+}
+.header_btn_img {
+  width: 16px;
+  margin-right: 6px;
 }
 </style>
