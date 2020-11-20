@@ -3,46 +3,49 @@
     <div class="wrapper">
       <div class="header_bg_gradient_div" />
       <div class="header_menu_div">
-        <div class="header_menu_logo">
-          <img
-            class="header_menu_logo_img"
-            src="../../assets/demologo.png"
-          />임시로고
-        </div>
+        <common-logo></common-logo>
         <div class="header_menu_button_div">
           <div class="header_menu_button_div_left">
-            <header-button
+            <common-button
               buttonName="아파트"
               buttonImg="apartment.png"
-            ></header-button>
-            <header-button
+            ></common-button>
+            <common-button
               buttonName="오피스텔"
               buttonImg="officetels.png"
-            ></header-button>
-            <header-button
+            ></common-button>
+            <common-button
               buttonName="원룸/투룸"
               buttonImg="oneroom.png"
-            ></header-button>
-            <header-button
+            ></common-button>
+            <common-button
               buttonName="단독주택"
               buttonImg="dandok.png"
-            ></header-button>
+            ></common-button>
           </div>
           <div class="header_menu_button_div_right">
-            <header-button
+            <common-button
               buttonName="로그인"
               buttonImg="login.png"
-            ></header-button>
-            <header-button
+            ></common-button>
+            <common-button
               buttonName="회원가입"
               buttonImg="signup.png"
-            ></header-button>
+            ></common-button>
           </div>
         </div>
       </div>
-      <div class="header_search_div">
+      <div
+        class="header_search_div"
+        v-bind:style="{ height: getHeight, fontSize: getFontSize }"
+      >
         <div class="header_search_box">
-          <input class="header_search_option_input" /> 근처
+          <img class="header_search_icon" src="../../assets/icons/search.png" />
+          <input
+            class="header_search_option_input"
+            v-bind:style="{ fontSize: getFontSize }"
+          />
+          근처
           <div class="header_search_option_div">아파트</div>
           의
           <div class="header_search_option_div">전/월세</div>
@@ -54,18 +57,57 @@
 </template>
 
 <script>
-import HeaderButton from "./HeaderButton.vue";
+import CommonButton from "../Common/CommonButton.vue";
+import CommonLogo from "../Common/CommonLogo.vue";
+import debounce from "lodash/debounce";
 
-export default { components: { HeaderButton } };
+export default {
+  data() {
+    return {
+      style: { height: 150, fontSize: 22 },
+    };
+  },
+  methods: {
+    handleScroll() {
+      // console.log(window.scrollY);
+      if (window.scrollY >= 30) {
+        this.style.height = 95;
+        this.style.fontSize = 18;
+      } else {
+        this.style.height = 150;
+        this.style.fontSize = 22;
+      }
+    },
+  },
+  computed: {
+    getHeight() {
+      return this.style.height + "px";
+    },
+    getFontSize() {
+      return this.style.fontSize + "px";
+    },
+  },
+  created() {
+    this.handleDebouncedScroll = debounce(this.handleScroll, 30);
+    window.addEventListener("scroll", this.handleDebouncedScroll);
+  },
+
+  beforeDestroy() {
+    // I switched the example from `destroyed` to `beforeDestroy`
+    // to exercise your mind a bit. This lifecycle method works too.
+    window.removeEventListener("scroll", this.handleDebouncedScroll);
+  },
+  components: { CommonButton, CommonLogo },
+};
 </script>
 
 <style scoped>
 .wrapper {
+  z-index: 50;
   position: fixed;
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 230px;
   font-weight: 700;
   font-size: 14px;
 }
@@ -91,10 +133,11 @@ export default { components: { HeaderButton } };
   width: 140px;
   height: 40px;
   margin-right: 20px;
-  border: 2px solid #d38fff;
+  /* border: 2px solid #d38fff; */
   border-radius: 12px;
   color: #d38fff;
   cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .header_menu_logo_img {
   width: 20px;
@@ -118,10 +161,9 @@ export default { components: { HeaderButton } };
   justify-content: center;
   align-items: flex-end;
   width: 100%;
-  height: 160px;
   color: #bbbbbb;
-  font-size: 26px;
-  font-weight: 500;
+  font-weight: 400;
+  transition: height 0.4s, font-size 0.4s;
 }
 .header_search_box {
   display: flex;
@@ -129,24 +171,29 @@ export default { components: { HeaderButton } };
   align-items: center;
   margin-bottom: 20px;
 }
+.header_search_icon {
+  width: 22px;
+  margin-right: 10px;
+}
 .header_search_option_input {
   padding: 5px;
   background-color: transparent;
   border: 0px;
   color: white;
-  border-bottom: 2px solid #bbbbbb;
+  border-bottom: 1px solid #bbbbbb;
   margin-right: 10px;
-  font-size: 26px;
-  width: 200px;
+  width: 160px;
+  transition: font-size 0.4s;
 }
 .header_search_option_input:focus {
   outline: none;
 }
 .header_search_option_div {
   padding: 4px 30px;
-  margin: 0px 10px;
+  margin-left: 20px;
+  margin-right: 4px;
   border-radius: 100px;
-  background-color: black;
+  background-color: #131313;
   color: white;
   cursor: pointer;
 }

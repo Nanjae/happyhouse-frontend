@@ -58,7 +58,7 @@ export default {
   transition: opacity 0.4s;
 }
 .header_btn_img {
-  width: 16px;
+  width: 14px;
   margin-right: 6px;
 }
 </style>
