@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="common_menu_logo">
+    <div v-on:click="moveHome" class="common_menu_logo">
       <img
         class="common_menu_logo_img"
         src="../../assets/demologo.png"
@@ -10,7 +10,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    moveHome() {
+      this.$router.push("/");
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -7,16 +7,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    homeSearchOption: "매매",
+    searchTypeOption: "1",
+    houseTypeOption: "1",
   },
   mutations: {
-    setHomeSearchOption(state, payload) {
-      state.homeSearchOption = payload;
+    setSearchTypeOption(state, payload) {
+      state.searchTypeOption = payload;
+    },
+    setHouseTypeOption(state, payload) {
+      state.houseTypeOption = payload;
     },
   },
   getters: {
-    homeSearchOption(state) {
-      return state.homeSearchOption;
+    getSearchTypeOption(state) {
+      return state.searchTypeOption;
+    },
+    getHouseTypeOption(state) {
+      return state.houseTypeOption;
     },
   },
 });

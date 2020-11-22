@@ -4,6 +4,7 @@
       class="wrapper"
       @mouseover="overButton"
       @mouseout="outButton"
+      @click="onClick"
       v-bind:style="{ color: getColor }"
     >
       <div class="header_btn_bg" v-bind:style="{ opacity: getOpacity }"></div>
@@ -27,6 +28,8 @@ export default {
     buttonName: String,
     buttonImg: { type: String, default: "" },
     textColor: { type: String, default: "white" },
+    houseType: { type: Number, default: 0 },
+    searchType: { type: Number, default: 0 },
   },
   computed: {
     getOpacity() {
@@ -44,6 +47,12 @@ export default {
     outButton() {
       this.style.opacity = 0;
       this.style.color = this.textColor;
+    },
+    onClick() {
+      if (this.searchType != 0 && this.houseType != 0) {
+        this.$store.commit("setSearchTypeOption", this.searchType);
+        this.$store.commit("setHouseTypeOption", this.houseType);
+      }
     },
   },
 };

@@ -45,37 +45,67 @@
             class="header_search_option_input"
             v-bind:style="{ fontSize: getFontSize }"
           />
-          <div>
-            근처 아파트의
+          근처
+          <div
+            class="header_house_option_div"
+            v-bind:class="{ house_is_top: isTop }"
+          >
+            <div
+              class="header_house_option_box"
+              v-bind:class="{ house_active: getHouseTypeOption == 1 }"
+            >
+              <header-search-button
+                optionText="아파트"
+                v-bind:type="1"
+                v-bind:optionNumber="1"
+                v-bind:active="getHouseTypeOption == 1 ? true : false"
+                v-bind:isTop="isTop ? true : false"
+              ></header-search-button>
+            </div>
+            <div
+              class="header_house_option_box"
+              v-bind:class="{ house_active: getHouseTypeOption == 2 }"
+            >
+              <header-search-button
+                optionText="오피스텔"
+                v-bind:type="1"
+                v-bind:optionNumber="2"
+                v-bind:active="getHouseTypeOption == 2 ? true : false"
+                v-bind:isTop="isTop ? true : false"
+              ></header-search-button>
+            </div>
           </div>
+          의
           <div
             class="header_search_option_div"
-            v-bind:class="{ isTop: getIsTop }"
+            v-bind:class="{ search_is_top: isTop }"
           >
             <div
               class="header_search_option_box"
-              v-bind:class="{ active: getHomeSearchOption == '전/월세' }"
+              v-bind:class="{ search_active: getSearchTypeOption == 1 }"
             >
               <header-search-button
-                optionText="전/월세"
-                v-bind:isTop="getIsTop ? true : false"
-                v-bind:active="getHomeSearchOption == '전/월세' ? true : false"
+                optionText="매매"
+                v-bind:type="2"
+                v-bind:optionNumber="1"
+                v-bind:active="getSearchTypeOption == 1 ? true : false"
+                v-bind:isTop="isTop ? true : false"
               ></header-search-button>
             </div>
             <div
               class="header_search_option_box"
-              v-bind:class="{ active: getHomeSearchOption == '매매' }"
+              v-bind:class="{ search_active: getSearchTypeOption == 2 }"
             >
               <header-search-button
-                optionText="매매"
-                v-bind:active="getHomeSearchOption == '매매' ? true : false"
-                v-bind:isTop="getIsTop ? true : false"
+                optionText="전/월세"
+                v-bind:type="2"
+                v-bind:optionNumber="2"
+                v-bind:active="getSearchTypeOption == 2 ? true : false"
+                v-bind:isTop="isTop ? true : false"
               ></header-search-button>
             </div>
           </div>
-          <div>
-            정보를 찾아드릴께요!
-          </div>
+          정보를 찾아드릴께요!
         </div>
       </div>
     </div>
@@ -115,11 +145,14 @@ export default {
     getFontSize() {
       return this.style.fontSize + "px";
     },
-    getIsTop() {
+    isTop() {
       return this.style.isTop;
     },
-    getHomeSearchOption() {
-      return this.$store.getters.homeSearchOption;
+    getSearchTypeOption() {
+      return this.$store.getters.getSearchTypeOption;
+    },
+    getHouseTypeOption() {
+      return this.$store.getters.getHouseTypeOption;
     },
   },
   created() {
@@ -222,14 +255,34 @@ export default {
 .header_search_option_input:focus {
   outline: none;
 }
+.header_house_option_div {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  margin-left: 12px;
+  margin-right: 4px;
+  transition: margin 0.4s, width 0.4s;
+  margin-bottom: 1px;
+}
 .header_search_option_div {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100px;
-  margin: 0px 5px;
+  margin-left: 12px;
+  margin-right: 4px;
   transition: margin 0.4s, width 0.4s;
+  margin-bottom: 1px;
+}
+.header_house_option_box {
+  z-index: 0;
+  position: absolute;
+  display: flex;
+  transform: translateY(-100%);
+  transition: transform 0.8s;
 }
 .header_search_option_box {
   z-index: 0;
@@ -238,12 +291,22 @@ export default {
   transform: translateY(-100%);
   transition: transform 0.8s;
 }
-.active {
+.search_active {
   z-index: 5;
   transform: translateY(0%);
 }
-.isTop {
+.house_active {
+  z-index: 5;
+  transform: translateY(0%);
+}
+.search_is_top {
   width: 130px;
-  margin: 0px 10px;
+  margin-left: 12px;
+  margin-right: 4px;
+}
+.house_is_top {
+  width: 150px;
+  margin-left: 12px;
+  margin-right: 4px;
 }
 </style>
