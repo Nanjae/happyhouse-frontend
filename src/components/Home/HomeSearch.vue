@@ -1,14 +1,38 @@
 <template>
   <div>
     <div class="wrapper" v-bind:style="{ opacity: getMountOpacity }">
-      <common-button buttonName="아파트 매매"></common-button>
-      <common-button buttonName="아파트 전/월세"></common-button>
-      <common-button buttonName="오피스텔 매매"></common-button>
-      <common-button buttonName="오피스텔 전/월세"></common-button>
-      <common-button buttonName="원룸/투룸 매매"></common-button>
-      <common-button buttonName="원룸/투룸 전/월세"></common-button>
-      <common-button buttonName="단독주택 매매"></common-button>
-      <common-button buttonName="단독주택 전/월세"></common-button>
+      <common-button
+        buttonName="아파트 매매"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="아파트 전/월세"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="오피스텔 매매"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="오피스텔 전/월세"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="원룸/투룸 매매"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="원룸/투룸 전/월세"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="단독주택 매매"
+        textColor="#bbbbbb"
+      ></common-button>
+      <common-button
+        buttonName="단독주택 전/월세"
+        textColor="#bbbbbb"
+      ></common-button>
     </div>
   </div>
 </template>

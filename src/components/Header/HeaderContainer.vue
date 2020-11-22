@@ -45,11 +45,37 @@
             class="header_search_option_input"
             v-bind:style="{ fontSize: getFontSize }"
           />
-          근처
-          <div class="header_search_option_div">아파트</div>
-          의
-          <div class="header_search_option_div">전/월세</div>
-          정보를 찾아드릴께요!
+          <div>
+            근처 아파트의
+          </div>
+          <div
+            class="header_search_option_div"
+            v-bind:class="{ isTop: getIsTop }"
+          >
+            <div
+              class="header_search_option_box"
+              v-bind:class="{ active: getHomeSearchOption == '전/월세' }"
+            >
+              <header-search-button
+                optionText="전/월세"
+                v-bind:isTop="getIsTop ? true : false"
+                v-bind:active="getHomeSearchOption == '전/월세' ? true : false"
+              ></header-search-button>
+            </div>
+            <div
+              class="header_search_option_box"
+              v-bind:class="{ active: getHomeSearchOption == '매매' }"
+            >
+              <header-search-button
+                optionText="매매"
+                v-bind:active="getHomeSearchOption == '매매' ? true : false"
+                v-bind:isTop="getIsTop ? true : false"
+              ></header-search-button>
+            </div>
+          </div>
+          <div>
+            정보를 찾아드릴께요!
+          </div>
         </div>
       </div>
     </div>
@@ -59,12 +85,13 @@
 <script>
 import CommonButton from "../Common/CommonButton.vue";
 import CommonLogo from "../Common/CommonLogo.vue";
+import HeaderSearchButton from "./HeaderSearchButton.vue";
 import debounce from "lodash/debounce";
 
 export default {
   data() {
     return {
-      style: { height: 150, fontSize: 22 },
+      style: { height: 150, fontSize: 22, isTop: true },
     };
   },
   methods: {
@@ -73,9 +100,11 @@ export default {
       if (window.scrollY >= 30) {
         this.style.height = 95;
         this.style.fontSize = 18;
+        this.style.isTop = false;
       } else {
         this.style.height = 150;
         this.style.fontSize = 22;
+        this.style.isTop = true;
       }
     },
   },
@@ -86,18 +115,23 @@ export default {
     getFontSize() {
       return this.style.fontSize + "px";
     },
+    getIsTop() {
+      return this.style.isTop;
+    },
+    getHomeSearchOption() {
+      return this.$store.getters.homeSearchOption;
+    },
   },
   created() {
     this.handleDebouncedScroll = debounce(this.handleScroll, 30);
     window.addEventListener("scroll", this.handleDebouncedScroll);
   },
-
   beforeDestroy() {
     // I switched the example from `destroyed` to `beforeDestroy`
     // to exercise your mind a bit. This lifecycle method works too.
     window.removeEventListener("scroll", this.handleDebouncedScroll);
   },
-  components: { CommonButton, CommonLogo },
+  components: { CommonButton, CommonLogo, HeaderSearchButton },
 };
 </script>
 
@@ -189,12 +223,27 @@ export default {
   outline: none;
 }
 .header_search_option_div {
-  padding: 4px 30px;
-  margin-left: 20px;
-  margin-right: 4px;
-  border-radius: 100px;
-  background-color: #131313;
-  color: white;
-  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  margin: 0px 5px;
+  transition: margin 0.4s, width 0.4s;
+}
+.header_search_option_box {
+  z-index: 0;
+  position: absolute;
+  display: flex;
+  transform: translateY(-100%);
+  transition: transform 0.8s;
+}
+.active {
+  z-index: 5;
+  transform: translateY(0%);
+}
+.isTop {
+  width: 130px;
+  margin: 0px 10px;
 }
 </style>

@@ -75,14 +75,14 @@ export default {
   transition: opacity 1.2s;
 }
 .info_left_div {
-  width: 33%;
+  width: 40%;
   height: 500px;
   margin-right: 20px;
   transition: transform 1.2s;
 }
 .info_right_div {
   position: relative;
-  width: 66%;
+  width: 60%;
   height: 500px;
   transition: transform 1.2s;
 }

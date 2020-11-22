@@ -7,7 +7,12 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    homeSearchOption: "",
+    homeSearchOption: "매매",
+  },
+  mutations: {
+    setHomeSearchOption(state, payload) {
+      state.homeSearchOption = payload;
+    },
   },
   getters: {
     homeSearchOption(state) {
