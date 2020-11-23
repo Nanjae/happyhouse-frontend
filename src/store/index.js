@@ -9,6 +9,8 @@ export default new Vuex.Store({
   state: {
     searchTypeOption: "1",
     houseTypeOption: "1",
+    searchTerm: "",
+    searchOpacity: 1,
   },
   mutations: {
     setSearchTypeOption(state, payload) {
@@ -17,6 +19,12 @@ export default new Vuex.Store({
     setHouseTypeOption(state, payload) {
       state.houseTypeOption = payload;
     },
+    setSearchTerm(state, payload) {
+      state.searchTerm = payload;
+    },
+    setSearchOpacity(state, payload) {
+      state.searchOpacity = payload;
+    },
   },
   getters: {
     getSearchTypeOption(state) {
@@ -24,6 +32,12 @@ export default new Vuex.Store({
     },
     getHouseTypeOption(state) {
       return state.houseTypeOption;
+    },
+    getSearchTerm(state) {
+      return state.searchTerm;
+    },
+    getSearchOpacity(state) {
+      return state.searchOpacity;
     },
   },
 });

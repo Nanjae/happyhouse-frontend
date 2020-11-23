@@ -9,18 +9,22 @@
             <common-button
               buttonName="아파트"
               buttonImg="apartment.png"
+              v-bind:houseType="1"
             ></common-button>
             <common-button
               buttonName="오피스텔"
               buttonImg="officetels.png"
+              v-bind:houseType="2"
             ></common-button>
             <common-button
               buttonName="원룸/투룸"
               buttonImg="oneroom.png"
+              v-bind:houseType="3"
             ></common-button>
             <common-button
               buttonName="단독주택"
               buttonImg="dandok.png"
+              v-bind:houseType="4"
             ></common-button>
           </div>
           <div class="header_menu_button_div_right">
@@ -42,7 +46,14 @@
         <div class="header_search_box">
           <img class="header_search_icon" src="../../assets/icons/search.png" />
           <input
+            v-on:keyup.enter="movePage"
+            v-on:keyup.esc="clearInput"
+            autocomplete="off"
             class="header_search_option_input"
+            ref="searchInput"
+            type="text"
+            name="term"
+            v-model="term"
             v-bind:style="{ fontSize: getFontSize }"
           />
           근처
@@ -50,6 +61,21 @@
             class="header_house_option_div"
             v-bind:class="{ house_is_top: isTop }"
           >
+            <div
+              class="header_house_option_img"
+              v-bind:style="{
+                backgroundImage:
+                  getHouseTypeOption == 1
+                    ? 'url(' + require('../../assets/icons/apartment.png') + ')'
+                    : getHouseTypeOption == 2
+                    ? 'url(' +
+                      require('../../assets/icons/officetels.png') +
+                      ')'
+                    : getHouseTypeOption == 3
+                    ? 'url(' + require('../../assets/icons/oneroom.png') + ')'
+                    : 'url(' + require('../../assets/icons/dandok.png') + ')',
+              }"
+            ></div>
             <div
               class="header_house_option_box"
               v-bind:class="{ house_active: getHouseTypeOption == 1 }"
@@ -60,6 +86,7 @@
                 v-bind:optionNumber="1"
                 v-bind:active="getHouseTypeOption == 1 ? true : false"
                 v-bind:isTop="isTop ? true : false"
+                v-bind:isHouse="true"
               ></header-search-button>
             </div>
             <div
@@ -72,6 +99,33 @@
                 v-bind:optionNumber="2"
                 v-bind:active="getHouseTypeOption == 2 ? true : false"
                 v-bind:isTop="isTop ? true : false"
+                v-bind:isHouse="true"
+              ></header-search-button>
+            </div>
+            <div
+              class="header_house_option_box"
+              v-bind:class="{ house_active: getHouseTypeOption == 3 }"
+            >
+              <header-search-button
+                optionText="원룸/투룸"
+                v-bind:type="1"
+                v-bind:optionNumber="3"
+                v-bind:active="getHouseTypeOption == 3 ? true : false"
+                v-bind:isTop="isTop ? true : false"
+                v-bind:isHouse="true"
+              ></header-search-button>
+            </div>
+            <div
+              class="header_house_option_box"
+              v-bind:class="{ house_active: getHouseTypeOption == 4 }"
+            >
+              <header-search-button
+                optionText="단독주택"
+                v-bind:type="1"
+                v-bind:optionNumber="4"
+                v-bind:active="getHouseTypeOption == 4 ? true : false"
+                v-bind:isTop="isTop ? true : false"
+                v-bind:isHouse="true"
               ></header-search-button>
             </div>
           </div>
@@ -122,11 +176,11 @@ export default {
   data() {
     return {
       style: { height: 150, fontSize: 22, isTop: true },
+      term: "",
     };
   },
   methods: {
     handleScroll() {
-      // console.log(window.scrollY);
       if (window.scrollY >= 30) {
         this.style.height = 95;
         this.style.fontSize = 18;
@@ -136,6 +190,34 @@ export default {
         this.style.fontSize = 22;
         this.style.isTop = true;
       }
+    },
+    movePage() {
+      this.$store.commit("setSearchOpacity", 0);
+      this.$refs.searchInput.blur();
+      const curFullPath =
+        "/search?term=" +
+        encodeURI(this.term) +
+        "&housetype=" +
+        this.$store.getters.getHouseTypeOption +
+        "&searchtype=" +
+        this.$store.getters.getSearchTypeOption;
+
+      setTimeout(() => {
+        if (this.$route.fullPath != curFullPath) {
+          this.$router.push({
+            path: "search",
+            query: {
+              term: this.term,
+              housetype: this.$store.getters.getHouseTypeOption,
+              searchtype: this.$store.getters.getSearchTypeOption,
+            },
+          });
+        }
+        this.$store.commit("setSearchOpacity", 1);
+      }, 1200);
+    },
+    clearInput() {
+      this.term = "";
     },
   },
   computed: {
@@ -153,6 +235,9 @@ export default {
     },
     getHouseTypeOption() {
       return this.$store.getters.getHouseTypeOption;
+    },
+    getSearchTerm() {
+      return this.$store.getters.getSearchTerm;
     },
   },
   created() {
@@ -260,11 +345,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 120px;
-  margin-left: 12px;
-  margin-right: 4px;
+  width: 80px;
+  margin-left: 8px;
+  margin-right: 0px;
   transition: margin 0.4s, width 0.4s;
-  margin-bottom: 1px;
 }
 .header_search_option_div {
   position: relative;
@@ -275,14 +359,15 @@ export default {
   margin-left: 12px;
   margin-right: 4px;
   transition: margin 0.4s, width 0.4s;
-  margin-bottom: 1px;
+  margin-bottom: 3px;
 }
 .header_house_option_box {
   z-index: 0;
   position: absolute;
   display: flex;
-  transform: translateY(-100%);
-  transition: transform 0.8s;
+  transition: opacity 0.8s;
+  opacity: 0;
+  margin-bottom: 4.5px;
 }
 .header_search_option_box {
   z-index: 0;
@@ -296,8 +381,9 @@ export default {
   transform: translateY(0%);
 }
 .house_active {
+  display: flex;
   z-index: 5;
-  transform: translateY(0%);
+  opacity: 1;
 }
 .search_is_top {
   width: 130px;
@@ -305,8 +391,16 @@ export default {
   margin-right: 4px;
 }
 .house_is_top {
-  width: 150px;
-  margin-left: 12px;
-  margin-right: 4px;
+  width: 100px;
+  margin-left: 10px;
+  margin-right: 0px;
+}
+.header_house_option_img {
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  margin-bottom: 5px;
+  transform: translateY(-100%);
+  transition: background-image 0.4s;
 }
 </style>

@@ -1,19 +1,17 @@
 <template>
-  <div class="search">검색 페이지</div>
+  <div class="search"><search-container></search-container></div>
 </template>
 
 <script>
+import SearchContainer from "../components/Search/SearchContainer.vue";
 export default {
   name: "Search",
-  components: {},
+  components: { SearchContainer },
 };
 </script>
 
 <style scoped>
 .search {
-  display: flex;
-  justify-content: center;
   padding-top: 230px;
-  height: 1000px;
 }
 </style>

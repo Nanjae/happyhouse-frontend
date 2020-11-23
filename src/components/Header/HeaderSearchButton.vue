@@ -4,10 +4,14 @@
       class="wrapper"
       @mouseover="overButton"
       @mouseout="outButton"
-      v-bind:class="{ active: active, isTop: isTop }"
+      v-bind:class="{
+        active: active && !isHouse,
+        isTop: isTop && !isHouse,
+        isHouse: isHouse,
+      }"
       v-bind:style="{
         opacity: getOpacity,
-        backgroundColor: getBgColor,
+        backgroundColor: !isHouse ? getBgColor : null,
         width: getWidth,
       }"
       @click="onClick"
@@ -28,6 +32,7 @@ export default {
     optionText: String,
     optionNumber: Number,
     isTop: Boolean,
+    isHouse: Boolean,
   },
   computed: {
     getOpacity() {
@@ -96,12 +101,18 @@ export default {
   padding: 2px 25px;
 }
 .active {
-  background-color: #131313;
   opacity: 1;
   border: 0px;
   padding: 2px 10px;
 }
 .isTop {
   padding: 2px 15px;
+}
+.isHouse {
+  background-color: transparent;
+  border: 0px;
+  padding: 2px 0px;
+  cursor: default;
+  font-weight: 700;
 }
 </style>

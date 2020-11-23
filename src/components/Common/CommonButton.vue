@@ -49,9 +49,13 @@ export default {
       this.style.color = this.textColor;
     },
     onClick() {
-      if (this.searchType != 0 && this.houseType != 0) {
-        this.$store.commit("setSearchTypeOption", this.searchType);
-        this.$store.commit("setHouseTypeOption", this.houseType);
+      if (this.houseType != 0) {
+        if (this.searchType != 0) {
+          this.$store.commit("setSearchTypeOption", this.searchType);
+          this.$store.commit("setHouseTypeOption", this.houseType);
+        } else {
+          this.$store.commit("setHouseTypeOption", this.houseType);
+        }
       }
     },
   },
