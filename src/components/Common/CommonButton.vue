@@ -30,12 +30,20 @@ export default {
     textColor: { type: String, default: "white" },
     houseType: { type: Number, default: 0 },
     searchType: { type: Number, default: 0 },
+    isRange: { type: Boolean, default: false },
+    range: { type: Number, default: 0 },
   },
   computed: {
     getOpacity() {
+      if (this.$store.getters.getSearchRange == this.range) {
+        return 0.1;
+      }
       return this.style.opacity;
     },
     getColor() {
+      if (this.$store.getters.getSearchRange == this.range) {
+        return "white";
+      }
       return this.style.color;
     },
   },
@@ -49,12 +57,25 @@ export default {
       this.style.color = this.textColor;
     },
     onClick() {
-      if (this.houseType != 0) {
-        if (this.searchType != 0) {
-          this.$store.commit("setSearchTypeOption", this.searchType);
-          this.$store.commit("setHouseTypeOption", this.houseType);
-        } else {
-          this.$store.commit("setHouseTypeOption", this.houseType);
+      if (this.isRange) {
+        this.$store.commit("setSearchRange", this.range);
+        this.$router.push({
+          path: "search",
+          query: {
+            term: this.$route.query.term,
+            housetype: this.$store.getters.getHouseTypeOption,
+            searchtype: this.$store.getters.getSearchTypeOption,
+            range: this.$store.getters.getSearchRange,
+          },
+        });
+      } else {
+        if (this.houseType != 0) {
+          if (this.searchType != 0) {
+            this.$store.commit("setSearchTypeOption", this.searchType);
+            this.$store.commit("setHouseTypeOption", this.houseType);
+          } else {
+            this.$store.commit("setHouseTypeOption", this.houseType);
+          }
         }
       }
     },

@@ -16,24 +16,23 @@
       ></div>
       <div class="feature_left_div">
         <div class="feature_content">
-          오아시스도 따뜻한 가치를 과실이 인간의 물방아 심장의 것이다. 얼마나
-          인생을 피는 구하기 것이다.
+          도로명, 건물명을 모르셔도 괜찮습니다. 키워드로 검색하여 주변을
+          둘러보세요!
         </div>
-        <div class="feature_title">오아시스</div>
+        <div class="feature_title">키워드 검색</div>
       </div>
       <div class="feature_center_div">
         <div class="feature_content">
-          유소년에게서 온갖 물방아 천고에 있음으로써 너의 하는 것은 뿐이다.
-          열락의 많이 하는 부패뿐이다. 방지하는 목숨을 것이 영원히 이상은
-          칼이다. 피에 낙원을 청춘이 귀는 보라.
+          검색하신 매물에서 직장, 학교 등 다양한 장소까지 가는데 걸리는 시간을
+          알아보세요!
         </div>
-        <div class="feature_title">유소년</div>
+        <div class="feature_title">길찾기</div>
       </div>
       <div class="feature_right_div">
         <div class="feature_content">
-          만물은 무엇을 사랑의 희망의 청춘 뭇 것은 옷을 부패뿐이다.
+          다른 사람들은 어떤 지역을 가장 많이 검색했을까요?
         </div>
-        <div class="feature_title">청춘만물</div>
+        <div class="feature_title">검색어 순위</div>
       </div>
     </div>
   </div>

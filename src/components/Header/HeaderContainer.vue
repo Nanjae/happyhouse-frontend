@@ -3,7 +3,12 @@
     <div class="wrapper">
       <div class="header_bg_gradient_div" />
       <div class="header_menu_div">
-        <common-logo></common-logo>
+        <div v-on:click="moveHome" class="common_menu_logo">
+          <img
+            class="common_menu_logo_img"
+            src="../../assets/demologo.png"
+          />임시로고
+        </div>
         <div class="header_menu_button_div">
           <div class="header_menu_button_div_left">
             <common-button
@@ -168,7 +173,7 @@
 
 <script>
 import CommonButton from "../Common/CommonButton.vue";
-import CommonLogo from "../Common/CommonLogo.vue";
+// import CommonLogo from "../Common/CommonLogo.vue";
 import HeaderSearchButton from "./HeaderSearchButton.vue";
 import debounce from "lodash/debounce";
 
@@ -180,19 +185,33 @@ export default {
     };
   },
   methods: {
+    moveHome() {
+      this.style.height = 150;
+      this.style.fontSize = 22;
+      this.style.isTop = true;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      this.$router.push("/");
+    },
     handleScroll() {
-      if (window.scrollY >= 30) {
+      if (this.$route.path != "/search") {
+        if (window.scrollY >= 30) {
+          this.style.height = 95;
+          this.style.fontSize = 18;
+          this.style.isTop = false;
+        } else {
+          this.style.height = 150;
+          this.style.fontSize = 22;
+          this.style.isTop = true;
+        }
+      } else {
         this.style.height = 95;
         this.style.fontSize = 18;
         this.style.isTop = false;
-      } else {
-        this.style.height = 150;
-        this.style.fontSize = 22;
-        this.style.isTop = true;
       }
     },
     movePage() {
       this.$store.commit("setSearchOpacity", 0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       this.$refs.searchInput.blur();
       const curFullPath =
         "/search?term=" +
@@ -201,20 +220,41 @@ export default {
         this.$store.getters.getHouseTypeOption +
         "&searchtype=" +
         this.$store.getters.getSearchTypeOption;
-
-      setTimeout(() => {
-        if (this.$route.fullPath != curFullPath) {
+      if (this.$route.path != "/search") {
+        setTimeout(() => {
+          this.$store.commit("setSearchRange", 500);
           this.$router.push({
             path: "search",
             query: {
               term: this.term,
               housetype: this.$store.getters.getHouseTypeOption,
               searchtype: this.$store.getters.getSearchTypeOption,
+              range: this.$store.getters.getSearchRange,
+            },
+          });
+          this.style.height = 95;
+          this.style.fontSize = 18;
+          this.style.isTop = false;
+          this.$store.commit("setSearchOpacity", 1);
+        }, 1200);
+      } else {
+        if (this.$route.fullPath != curFullPath) {
+          this.$store.commit("setSearchRange", 500);
+          this.$router.push({
+            path: "search",
+            query: {
+              term: this.term,
+              housetype: this.$store.getters.getHouseTypeOption,
+              searchtype: this.$store.getters.getSearchTypeOption,
+              range: this.$store.getters.getSearchRange,
             },
           });
         }
+        this.style.height = 95;
+        this.style.fontSize = 18;
+        this.style.isTop = false;
         this.$store.commit("setSearchOpacity", 1);
-      }, 1200);
+      }
     },
     clearInput() {
       this.term = "";
@@ -249,7 +289,19 @@ export default {
     // to exercise your mind a bit. This lifecycle method works too.
     window.removeEventListener("scroll", this.handleDebouncedScroll);
   },
-  components: { CommonButton, CommonLogo, HeaderSearchButton },
+  mounted() {
+    if (this.$route.path == "/search") {
+      this.style.height = 95;
+      this.style.fontSize = 18;
+      this.style.isTop = false;
+      this.$store.commit("setSearchOpacity", 1);
+    }
+  },
+  components: {
+    CommonButton,
+    // CommonLogo,
+    HeaderSearchButton,
+  },
 };
 </script>
 
@@ -402,5 +454,22 @@ export default {
   margin-bottom: 5px;
   transform: translateY(-100%);
   transition: background-image 0.4s;
+}
+.common_menu_logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 140px;
+  height: 40px;
+  margin-right: 20px;
+  /* border: 2px solid #d38fff; */
+  border-radius: 12px;
+  color: #d38fff;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.common_menu_logo_img {
+  width: 20px;
+  margin-right: 6px;
 }
 </style>

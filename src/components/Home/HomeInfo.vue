@@ -7,8 +7,8 @@
       >
         <home-info-img
           imgSrc="apartment_inside.jpg"
-          titleText="별 당신은 이름과"
-          contentText="이름과, 멀듯이, 밤을 하나에 당신은 너무나 별 봅니다. 당신은 써 나의 강아지, 때 이름자 있습니다."
+          titleText="검색어 순위"
+          contentText="준비 중 입니다....."
         />
       </div>
       <div
@@ -17,10 +17,8 @@
       >
         <home-info-img
           imgSrc="apartment_outside.jpg"
-          titleText="가난한 파란 멀리 비둘기"
-          contentText="계집애들의 헤는 우는 패, 시인의 불러 하나에 까닭입니다. 가을로 이국 쓸쓸함과 지나고 이웃 거외다. 남은 별 아직 하나에 있습니다. 
-          추억과 별 이네들은 그리워 봅니다. 지나가는 까닭이요, 말 나는 계절이 별에도 하나에 겨울이 거외다. 
-          노루, 자랑처럼 불러 이국 멀리 이 봅니다. 묻힌 멀듯이, 나는 까닭이요, 차 하늘에는 때 벌레는 둘 듯합니다. 노루, 강아지, 지나고 새워 라이너 있습니다."
+          titleText="아파트 매매"
+          contentText="준비 중 입니다....."
         />
       </div>
     </div>

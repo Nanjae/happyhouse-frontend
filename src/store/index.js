@@ -11,8 +11,12 @@ export default new Vuex.Store({
     houseTypeOption: "1",
     searchTerm: "",
     searchOpacity: 1,
+    searchRange: 500,
   },
   mutations: {
+    setSearchRange(state, payload) {
+      state.searchRange = payload;
+    },
     setSearchTypeOption(state, payload) {
       state.searchTypeOption = payload;
     },
@@ -27,6 +31,9 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    getSearchRange(state) {
+      return state.searchRange;
+    },
     getSearchTypeOption(state) {
       return state.searchTypeOption;
     },
