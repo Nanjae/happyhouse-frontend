@@ -4,10 +4,7 @@
       <div class="header_bg_gradient_div" />
       <div class="header_menu_div">
         <div v-on:click="moveHome" class="common_menu_logo">
-          <img
-            class="common_menu_logo_img"
-            src="../../assets/demologo.png"
-          />임시로고
+          <img class="common_menu_logo_img" src="../../assets/demologo.png" />
         </div>
         <div class="header_menu_button_div">
           <div class="header_menu_button_div_left">
@@ -466,10 +463,12 @@ export default {
   border-radius: 12px;
   color: #d38fff;
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* background-color: rgba(0, 0, 0, 0.5); */
 }
 .common_menu_logo_img {
-  width: 20px;
-  margin-right: 6px;
+  width: 180px;
+  object-fit: contain;
+  margin-left: 8px;
+  margin-top: 1px;
 }
 </style>

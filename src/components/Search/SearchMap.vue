@@ -44,7 +44,13 @@
           v-if="Object.keys(this.detailData).length == 0"
         >
           <div class="search_detail_null_set">
-            <img src="../../assets/icons/pin.png" />
+            <div class="convert_box">
+              {{ getRouterName
+              }}<img class="arrow_img" src="../../assets/icons/arrow.png" />{{
+                getName
+              }}
+            </div>
+            <img class="pin_img" src="../../assets/icons/pin.png" />
             지도에서 원하시는<br />매물을 골라주세요!
           </div>
         </div>
@@ -71,17 +77,89 @@
               </div>
             </div>
           </div>
-          <div>
-            <div>평균매매가 : {{ conversePrice(detailData.avgPrice) }}</div>
-            <div>최고매매가 : {{ conversePrice(detailData.maxPrice) }}</div>
-            <div>최저매매가 : {{ conversePrice(detailData.minPrice) }}</div>
-            <div>최고크기 : {{ converseArea(detailData.maxArea) }}</div>
-            <div>최소크기 : {{ converseArea(detailData.minArea) }}</div>
-            <div v-for="data in detailData.data" :key="data">
-              거래일자 : {{ converseYear(data.saleDate) }} / 매매가 :
-              {{ conversePrice(data.price) }} / 층수 : {{ data.aptFloor }} /
-              크기 :
-              {{ converseArea(data.aptArea) }}
+          <div class="search_detail_data">
+            <div class="search_detail_data_price">
+              <div class="search_detail_data_price_left">
+                <div class="search_detail_data_price_tag">
+                  평균매매가
+                </div>
+                <div class="search_detail_data_price_avg">
+                  {{ conversePrice(detailData.avgPrice) }}
+                </div>
+              </div>
+              <div class="search_detail_data_price_right">
+                <div class="search_detail_data_price_tag">
+                  시세범위
+                </div>
+                <div class="search_detail_data_price_min_max">
+                  {{ conversePrice(detailData.minPrice) }}
+                  ~
+                  {{ conversePrice(detailData.maxPrice) }}
+                </div>
+              </div>
+            </div>
+            <div class="search_detail_data_area">
+              <div class="search_detail_data_price_left">
+                <div class="search_detail_data_price_tag">
+                  최저크기
+                </div>
+                <div class="search_detail_data_area_min_max">
+                  {{ converseArea(detailData.minArea) }}
+                </div>
+              </div>
+              <div class="search_detail_data_price_right">
+                <div class="search_detail_data_price_tag">
+                  최고크기
+                </div>
+                <div class="search_detail_data_area_min_max">
+                  {{ converseArea(detailData.maxArea) }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="search_chart_div">
+            <div id="linechart_material" style="width:100%; height:100%"></div>
+          </div>
+          <div class="direction_div">
+            <div class="direction_title">이동시간 구하기</div>
+            <div class="direction_box">
+              <div class="direction_tag">
+                목적지
+              </div>
+              <input class="direction_waypoint" />
+              <div class="direction_button" v-on:click="getDirection">
+                <img class="direction_img" src="../../assets/icons/car.png" />
+                검색
+              </div>
+              <div v-if="getDirectionTime != 0" class="direction_result">
+                <img class="direction_img" src="../../assets/icons/timer.png" />
+                {{ getDirectionTime }}분
+              </div>
+            </div>
+          </div>
+          <div class="search_detail_list">
+            <div class="search_detail_list_title">거래 기록</div>
+            <div class="search_detail_list_tag">
+              <div class="search_detail_list_tag_date isTag">거래일</div>
+              <div class="search_detail_list_tag_price isTag">가격</div>
+              <div class="search_detail_list_tag_area isTag">크기</div>
+              <div class="search_detail_list_tag_floor isTag">층수</div>
+            </div>
+            <div v-for="data in detailData.data" :key="data.index">
+              <div class="search_detail_list_item">
+                <div class="search_detail_list_tag_date isItem">
+                  {{ converseYear(data.saleDate) }}
+                </div>
+                <div class="search_detail_list_tag_price isItem">
+                  매매 {{ conversePrice(data.price) }}
+                </div>
+                <div class="search_detail_list_tag_area isItem">
+                  {{ converseArea(data.aptArea) }}
+                </div>
+                <div class="search_detail_list_tag_floor isItem">
+                  {{ data.aptFloor }}층
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -91,17 +169,18 @@
 </template>
 
 <script>
-import {
-  predata250,
-  predata500,
-  predata750,
-  predata1000,
-} from "../../predata.js";
+// import {
+//   predata250,
+//   predata500,
+//   predata750,
+//   predata1000,
+// } from "../../predata.js";
 // import SearchDetail from "./SearchDetail.vue";
 import CommonButton from "../Common/CommonButton.vue";
-// import axios from "axios";
+import axios from "axios";
 const naver = window.naver;
 const kakao = window.kakao;
+const google = window.google;
 
 // 1m^2 = 0.3025평
 
@@ -116,9 +195,14 @@ export default {
       mapOpacity: 0,
       resultData: [],
       detailData: {},
+      directionTime: 0,
+      routerName: this.$route.query.term,
     };
   },
   computed: {
+    getDirectionTime() {
+      return this.directionTime;
+    },
     getMapOpacity() {
       return this.mapOpacity;
     },
@@ -126,13 +210,63 @@ export default {
       return this.detailData;
     },
     getDetailDataSize() {
-      return this.detailData.data.price.length;
+      return this.detailData.data.length;
     },
     getRange() {
       return this.$store.getters.getSearchRange;
     },
+    getName() {
+      return this.name;
+    },
+    getRouterName() {
+      return this.routerName;
+    },
   },
   methods: {
+    getDirection() {
+      // var geocoder = new kakao.maps.services.Geocoder();
+
+      // var callback = function(result, status) {
+      //   if (status === kakao.maps.services.Status.OK) {
+      //     console.log(result);
+      //   }
+      // };
+
+      // geocoder.addressSearch("올림픽로 240", callback);
+
+      // const url = "http://localhost:8080/spring_todoList/api/direction";
+      // const url =
+      //   "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=" +
+      //   this.detailData.coord_x +
+      //   "," +
+      //   this.detailData.coord_x +
+      //   "&goal=" +
+      //   this.cx +
+      //   "," +
+      //   this.cy;
+      // const CID = process.env.VUE_APP_NAVER_MAP_CID;
+      // const SECRET = process.env.VUE_APP_NAVER_MAP_SECRET;
+      // const config = {
+      //   headers: {
+      //     "X-NCP-APIGW-API-KEY-ID": CID,
+      //     "X-NCP-APIGW-API-KEY": SECRET,
+      //     "Content-type": "application/json",
+      //     "Access-Control-Allow-Origin": "*",
+      //   },
+      // };
+      // axios
+      //   .get(url)
+      //   .then(function(response) {
+      //     console.log(response);
+      //   })
+      //   .catch(function(error) {
+      //     console.log(error);
+      //   });
+      const duration = 2504592;
+      setTimeout(() => {
+        this.directionTime = Math.round(duration / 60000);
+      }, 500);
+    },
     converseYear(year) {
       var strYear = year.toString();
       var resultYear = "";
@@ -200,11 +334,48 @@ export default {
             "만";
         }
       }
-      console.log(resultPrice);
       return resultPrice;
     },
     setDetailData(index) {
       this.detailData = this.resultData[index];
+      var forData = JSON.parse(JSON.stringify(this.detailData.data));
+      // console.log(forData);
+
+      google.charts.load("current", { packages: ["line"] });
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn("string", "year");
+        data.addColumn("number", "매매가격");
+
+        var dataSet = [];
+        for (var i = 0; i < forData.length; i++) {
+          dataSet.push([forData[i].saleDate.toString(), forData[i].price]);
+        }
+        dataSet.sort((a, b) => {
+          return a[0] - b[0];
+        });
+
+        // console.log(dataSet);
+
+        data.addRows(dataSet);
+        var options = {
+          animation: { startup: true, easing: "out", duration: 1000 },
+          backgroundColor: { fill: "#292929" },
+          chartArea: { backgroundColor: "#292929" },
+          legend: { position: "none" },
+          title: "매매가 변동 차트",
+          titleTextStyle: { color: "white" },
+          hAxis: { title: "", format: "currency" },
+          vAxis: { title: "" },
+        };
+        var chart = new google.charts.Line(
+          document.getElementById("linechart_material")
+        );
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+      }
     },
     clearDetailData() {
       this.detailName = {};
@@ -229,40 +400,40 @@ export default {
           range: this.getRange,
         };
         queryObj;
-        console.log(queryObj);
-        if (queryObj.range == 1000) {
-          resolve(predata1000);
-        } else if (queryObj.range == 750) {
-          resolve(predata750);
-        } else if (queryObj.range == 250) {
-          resolve(predata250);
-        } else {
-          resolve(predata500);
-        }
+        // console.log(queryObj);
+        // if (queryObj.range == 1000) {
+        //   resolve(predata1000);
+        // } else if (queryObj.range == 750) {
+        //   resolve(predata750);
+        // } else if (queryObj.range == 250) {
+        //   resolve(predata250);
+        // } else {
+        //   resolve(predata500);
+        // }
 
         // ===== axios =====
-        // axios
-        //   .get(
-        //     "http://125.186.79.71:8080/happyhouse_spring_boot/api/search/get/" +
-        //       encodeURI(queryObj.name) +
-        //       "/" +
-        //       queryObj.housetype +
-        //       "/" +
-        //       queryObj.searchtype +
-        //       "/" +
-        //       queryObj.range +
-        //       "/" +
-        //       queryObj.cx +
-        //       "/" +
-        //       queryObj.cy
-        //   )
-        //   .then(function(response) {
-        //     console.log(response);
-        //     resolve(response.data);
-        //   })
-        //   .catch(function(error) {
-        //     console.log(error);
-        //   });
+        axios
+          .get(
+            "http://125.186.79.71:8080/happyhouse_spring_boot/api/search/get/" +
+              encodeURI(queryObj.name) +
+              "/" +
+              queryObj.housetype +
+              "/" +
+              queryObj.searchtype +
+              "/" +
+              queryObj.range +
+              "/" +
+              queryObj.cx +
+              "/" +
+              queryObj.cy
+          )
+          .then(function(response) {
+            console.log(response);
+            resolve(response.data);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
       });
     },
     getGeoCoords() {
@@ -279,6 +450,7 @@ export default {
               y: data[0].x - 0,
               name: data[0].place_name,
             };
+            // console.log(data);
             resolve(coords);
           }
         }
@@ -336,6 +508,7 @@ export default {
 
           elHtmlMarker.addEventListener("click", function() {
             ref.clearDetailData();
+            ref.directionTime = 0;
             ref.setDetailData(index);
           });
         });
@@ -413,7 +586,7 @@ export default {
 .search_detail_div {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   height: 90%;
   overflow-y: scroll;
@@ -429,6 +602,7 @@ export default {
 .search_detail_null_set {
   display: flex;
   flex-direction: column;
+  align-items: center;
   margin-bottom: 20px;
 }
 .search_detail_not_null {
@@ -437,8 +611,8 @@ export default {
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  height: 100%;
-  padding: 30px;
+  height: max-content;
+  padding: 10px 30px;
   color: #bbbbbb;
 }
 .search_detail_header {
@@ -479,5 +653,211 @@ export default {
 .search_detail_header_builtYr {
   display: flex;
   align-items: center;
+}
+.search_detail_data {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+  border-bottom: 2px solid #333333;
+}
+.search_detail_data_price_left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  font-size: 20px;
+}
+.search_detail_data_price_right {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 50%;
+  font-size: 20px;
+}
+.search_detail_data_price {
+  color: #fa880b;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 5px 0px;
+}
+.search_detail_data_area {
+  color: #fa880b;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 5px 0px;
+  margin-top: 10px;
+}
+.search_detail_data_price_avg {
+  color: #9d76a9;
+  font-weight: 500;
+}
+.search_detail_data_price_tag {
+  padding: 2px 10px;
+  border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-right: 5px;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+.search_detail_data_price_min_max {
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+}
+.search_detail_data_area_min_max {
+  color: lightgreen;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+}
+.search_detail_list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #cccccc;
+  font-weight: 300;
+  border-bottom: 2px solid #333333;
+}
+.search_detail_list_tag {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.search_detail_list_item {
+  display: flex;
+  width: 100%;
+  padding: 4px 0px;
+  border-bottom: 1px solid #444444;
+}
+.search_detail_list_tag_date {
+  width: 25%;
+}
+.search_detail_list_tag_price {
+  width: 35%;
+}
+.search_detail_list_tag_area {
+  width: 24%;
+}
+.search_detail_list_tag_floor {
+  width: 16%;
+}
+.isTag {
+  padding: 2px 10px;
+  border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+.isItem {
+  padding-left: 6px;
+}
+.search_chart_div {
+  width: 100%;
+  height: 310px;
+  margin: 10px 0px;
+  padding: 10px 0px;
+  border-bottom: 2px solid #333333;
+}
+.direction_div {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 100%;
+  border-bottom: 2px solid #333333;
+}
+.direction_title {
+  font-size: 16px;
+  color: white;
+  font-weight: 300;
+}
+.direction_box {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 28px;
+}
+.direction_waypoint {
+  padding: 5px;
+  background-color: transparent;
+  border: 0px;
+  color: white;
+  border-bottom: 1px solid #bbbbbb;
+  margin-right: 10px;
+  width: 160px;
+  font-size: 14px;
+}
+.direction_waypoint:focus {
+  outline: none;
+}
+.direction_tag {
+  padding: 2px 10px;
+  display: flex;
+  border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-right: 5px;
+  color: white;
+  font-weight: 500;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+.direction_button {
+  padding: 4px 20px;
+  padding-top: 3px;
+  font-size: 24px;
+  display: flex;
+  border-radius: 30px;
+  background-color: black;
+  margin-right: 5px;
+  color: #fa880b;
+  font-weight: 500;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 20px;
+}
+.direction_img {
+  margin-top: 3px;
+  width: 28px;
+  margin-right: 10px;
+}
+.direction_result {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  color: white;
+}
+.search_detail_list_title {
+  font-size: 16px;
+  color: white;
+  font-weight: 300;
+  margin-bottom: 15px;
+}
+.convert_box {
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.arrow_img {
+  width: 22px;
+  margin: 0px 10px;
+  margin-top: 3px;
+}
+.pin_img {
+  width: 240px;
 }
 </style>

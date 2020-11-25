@@ -1,13 +1,40 @@
 <template>
-  <div class="wrapper">
-    <div class="title_text">{{ titleText }}</div>
-    <div class="content_text">{{ contentText }}</div>
+  <div v-bind:style="{ opacity: getSearchOpacity, transition: 'opacity 1.2s' }">
+    <div class="wrapper">
+      <div class="title_text">{{ titleText }}</div>
+      <div class="<div" v-for="data in topSearchData" :key="data.index">
+        <div class="content_text">{{ data.keyword }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { predataTop10 } from "../../predata.js";
+
 export default {
+  data() {
+    return {
+      topSearchData: [],
+    };
+  },
   props: { titleText: String, contentText: String },
+  methods: {
+    setSearchData(data) {
+      this.topSearchData = JSON.parse(JSON.stringify(data));
+    },
+    getSearchData() {
+      return new Promise((resolve) => {
+        resolve(predataTop10);
+      });
+    },
+  },
+  mounted() {
+    this.getSearchData().then((result) => {
+      console.log("탑10 데이터 가져오기 완료!");
+      this.setSearchData(result);
+    });
+  },
 };
 </script>
 

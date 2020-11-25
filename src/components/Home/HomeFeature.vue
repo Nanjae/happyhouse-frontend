@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-bind:style="{ opacity: getSearchOpacity, transition: 'opacity 1.2s' }">
     <div
       class="wrapper"
       v-bind:style="{ opacity: getMountOpacity }"
@@ -41,7 +41,7 @@
 export default {
   data() {
     return {
-      style: { opacity: 0.25, mountOpacity: 0 },
+      style: { opacity: 0.5, mountOpacity: 0 },
     };
   },
   mounted() {
@@ -52,6 +52,9 @@ export default {
     });
   },
   computed: {
+    getSearchOpacity() {
+      return this.$store.getters.getSearchOpacity;
+    },
     getOpacity() {
       return this.style.opacity;
     },
@@ -61,10 +64,10 @@ export default {
   },
   methods: {
     overImg() {
-      this.style.opacity = 0.7;
+      this.style.opacity = 0.8;
     },
     outImg() {
-      this.style.opacity = 0.25;
+      this.style.opacity = 0.5;
     },
     onMounted() {
       this.style.mountOpacity = 1;

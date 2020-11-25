@@ -1,32 +1,25 @@
 <template>
-  <div>
+  <div v-bind:style="{ opacity: getSearchOpacity, transition: 'opacity 1.2s' }">
     <div class="wrapper" v-bind:style="{ opacity: getMountOpacity }">
       <div
         class="info_left_div"
         v-bind:style="{ transform: 'translateX(' + getLeftPos + ')' }"
       >
-        <home-info-img
-          imgSrc="apartment_inside.jpg"
-          titleText="검색어 순위"
-          contentText="준비 중 입니다....."
-        />
+        <home-info-top-10-img imgSrc="apartment_inside.jpg" />
       </div>
       <div
         class="info_right_div"
         v-bind:style="{ transform: 'translateX(' + getRightPos + ')' }"
       >
-        <home-info-img
-          imgSrc="apartment_outside.jpg"
-          titleText="아파트 매매"
-          contentText="준비 중 입니다....."
-        />
+        <home-info-news-img imgSrc="apartment_outside.jpg" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import HomeInfoImg from "./HomeInfoImg.vue";
+import HomeInfoNewsImg from "./HomeInfoNewsImg.vue";
+import HomeInfoTop10Img from "./HomeInfoTop10Img.vue";
 export default {
   data() {
     return {
@@ -44,8 +37,16 @@ export default {
       }, 300);
     });
   },
-  components: { HomeInfoImg },
+  components: {
+    // HomeInfoImg,
+    HomeInfoTop10Img,
+    HomeInfoNewsImg,
+  },
   computed: {
+    getSearchOpacity() {
+      this.unchangePos();
+      return this.$store.getters.getSearchOpacity;
+    },
     getLeftPos() {
       return this.style.leftPos;
     },
@@ -57,6 +58,11 @@ export default {
     },
   },
   methods: {
+    unchangePos() {
+      this.style.leftPos = "-100%";
+      this.style.rightPos = "100%";
+      this.style.mountOpacity = 0;
+    },
     changePos() {
       this.style.leftPos = "0%";
       this.style.rightPos = "0%";
@@ -73,14 +79,14 @@ export default {
   transition: opacity 1.2s;
 }
 .info_left_div {
-  width: 40%;
+  width: 35%;
   height: 500px;
   margin-right: 20px;
   transition: transform 1.2s;
 }
 .info_right_div {
   position: relative;
-  width: 60%;
+  width: 65%;
   height: 500px;
   transition: transform 1.2s;
 }
