@@ -1,5 +1,10 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    v-bind:style="{
+      backgroundColor: getBgColor,
+    }"
+  >
     <app-header></app-header>
     <router-view :key="$route.fullPath"></router-view>
     <app-footer></app-footer>
@@ -13,6 +18,13 @@ import AppFooter from "@/components/Footer/FooterContainer.vue";
 export default {
   name: "App",
   components: { AppHeader, AppFooter },
+  computed: {
+    getBgColor() {
+      return this.$store.getters.getSearchTypeOption == "1"
+        ? "#292929"
+        : "#2750aa";
+    },
+  },
 };
 </script>
 
@@ -35,10 +47,10 @@ export default {
   text-align: center;
   color: #2c3e50; */
   width: 100%;
+  transition: background-color 0.4s;
 }
 body {
   padding: 0px;
   margin: 0px;
-  background-color: #292929;
 }
 </style>

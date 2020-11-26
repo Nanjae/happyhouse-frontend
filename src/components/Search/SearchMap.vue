@@ -10,7 +10,10 @@
       class="search_detail_wrapper"
       v-bind:style="{ opacity: getMapOpacity }"
     >
-      <div class="search_range_div">
+      <div
+        class="search_range_div"
+        v-bind:style="{ borderBottomColor: getBorderColor }"
+      >
         <div class="search_range_box">
           <common-button
             buttonName="250m"
@@ -59,7 +62,10 @@
           v-else
           v-bind:detailData="getDetailData"
         >
-          <div class="search_detail_header">
+          <div
+            class="search_detail_header"
+            v-bind:style="{ borderBottomColor: getBorderColor }"
+          >
             <div class="search_detail_header_top">
               <div class="search_detail_header_name">
                 {{ detailData.name }}
@@ -77,7 +83,10 @@
               </div>
             </div>
           </div>
-          <div class="search_detail_data">
+          <div
+            class="search_detail_data"
+            v-bind:style="{ borderBottomColor: getBorderColor }"
+          >
             <div class="search_detail_data_price">
               <div class="search_detail_data_price_left">
                 <div class="search_detail_data_price_tag">
@@ -117,16 +126,22 @@
               </div>
             </div>
           </div>
-          <div class="search_chart_div">
+          <div
+            class="search_chart_div"
+            v-bind:style="{ borderBottomColor: getBorderColor }"
+          >
             <div id="linechart_material" style="width:100%; height:100%"></div>
           </div>
-          <div class="direction_div">
+          <div
+            class="direction_div"
+            v-bind:style="{ borderBottomColor: getBorderColor }"
+          >
             <div class="direction_title">이동시간 구하기</div>
             <div class="direction_box">
               <div class="direction_tag">
                 목적지
               </div>
-              <input class="direction_waypoint" />
+              <input v-model="directionPlace" class="direction_waypoint" />
               <div class="direction_button" v-on:click="getDirection">
                 <img class="direction_img" src="../../assets/icons/car.png" />
                 검색
@@ -137,7 +152,10 @@
               </div>
             </div>
           </div>
-          <div class="search_detail_list">
+          <div
+            class="search_detail_list"
+            v-bind:style="{ borderBottomColor: getBorderColor }"
+          >
             <div class="search_detail_list_title">거래 기록</div>
             <div class="search_detail_list_tag">
               <div class="search_detail_list_tag_date isTag">거래일</div>
@@ -146,7 +164,10 @@
               <div class="search_detail_list_tag_floor isTag">층수</div>
             </div>
             <div v-for="data in detailData.data" :key="data.index">
-              <div class="search_detail_list_item">
+              <div
+                class="search_detail_list_item"
+                v-bind:style="{ borderBottomColor: getBorderColor }"
+              >
                 <div class="search_detail_list_tag_date isItem">
                   {{ converseYear(data.saleDate) }}
                 </div>
@@ -196,10 +217,16 @@ export default {
       resultData: [],
       detailData: {},
       directionTime: 0,
+      directionPlace: "",
       routerName: this.$route.query.term,
     };
   },
   computed: {
+    getBorderColor() {
+      return this.$store.getters.getSearchTypeOption == "1"
+        ? "#333333"
+        : "#1364c0";
+    },
     getDirectionTime() {
       return this.directionTime;
     },
@@ -233,39 +260,39 @@ export default {
       // };
 
       // geocoder.addressSearch("올림픽로 240", callback);
+      const ref = this;
+      let goalx = 0;
+      let goaly = 0;
 
-      // const url = "http://localhost:8080/spring_todoList/api/direction";
-      // const url =
-      //   "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=" +
-      //   this.detailData.coord_x +
-      //   "," +
-      //   this.detailData.coord_x +
-      //   "&goal=" +
-      //   this.cx +
-      //   "," +
-      //   this.cy;
-      // const CID = process.env.VUE_APP_NAVER_MAP_CID;
-      // const SECRET = process.env.VUE_APP_NAVER_MAP_SECRET;
-      // const config = {
-      //   headers: {
-      //     "X-NCP-APIGW-API-KEY-ID": CID,
-      //     "X-NCP-APIGW-API-KEY": SECRET,
-      //     "Content-type": "application/json",
-      //     "Access-Control-Allow-Origin": "*",
-      //   },
-      // };
-      // axios
-      //   .get(url)
-      //   .then(function(response) {
-      //     console.log(response);
-      //   })
-      //   .catch(function(error) {
-      //     console.log(error);
-      //   });
-      const duration = 2504592;
-      setTimeout(() => {
-        this.directionTime = Math.round(duration / 60000);
-      }, 500);
+      this.getGeoAddress(this.directionPlace).then((result) => {
+        // console.log(result);
+        goalx = result[0].y;
+        goaly = result[0].x;
+        const url =
+          "http://125.186.79.71:8080/happyhouse_spring_boot/api/direction?start=" +
+          this.detailData.coord_y +
+          "," +
+          this.detailData.coord_x +
+          "&goal=" +
+          goaly +
+          "," +
+          goalx +
+          "&cid=" +
+          process.env.VUE_APP_NAVER_MAP_CID +
+          "&key=" +
+          process.env.VUE_APP_NAVER_MAP_SECRET;
+        axios
+          .get(url)
+          .then(function(response) {
+            const resDuration =
+              response.data.route.traoptimal[0].summary.duration;
+            console.log(resDuration);
+            ref.directionTime = Math.round(resDuration / 60000);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
     },
     converseYear(year) {
       var strYear = year.toString();
@@ -362,8 +389,8 @@ export default {
         data.addRows(dataSet);
         var options = {
           animation: { startup: true, easing: "out", duration: 1000 },
-          backgroundColor: { fill: "#292929" },
-          chartArea: { backgroundColor: "#292929" },
+          backgroundColor: { fill: "transparent" },
+          chartArea: { backgroundColor: "transparent" },
           legend: { position: "none" },
           title: "매매가 변동 차트",
           titleTextStyle: { color: "white" },
@@ -434,6 +461,19 @@ export default {
           .catch(function(error) {
             console.log(error);
           });
+      });
+    },
+    getGeoAddress(place) {
+      return new Promise((resolve) => {
+        var ps = new kakao.maps.services.Places();
+
+        ps.keywordSearch(place, placesSearchCB);
+
+        function placesSearchCB(data, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            resolve(data);
+          }
+        }
       });
     },
     getGeoCoords() {
@@ -571,7 +611,8 @@ export default {
   align-items: center;
   width: 100%;
   height: 10%;
-  border-bottom: 2px solid #333333;
+  border-bottom: 2px solid;
+  transition: border-color 0.4s;
   /* background-color: rgba(0, 0, 0, 0.3); */
 }
 .search_range_box {
@@ -620,7 +661,8 @@ export default {
   flex-direction: column;
   width: 100%;
   padding: 10px;
-  border-bottom: 2px solid #333333;
+  transition: border-color 0.4s;
+  border-bottom: 2px solid;
 }
 .search_detail_header_top {
   display: flex;
@@ -659,7 +701,8 @@ export default {
   flex-direction: column;
   width: 100%;
   padding: 10px;
-  border-bottom: 2px solid #333333;
+  border-bottom: 2px solid;
+  transition: border-color 0.4s;
 }
 .search_detail_data_price_left {
   display: flex;
@@ -691,7 +734,7 @@ export default {
   margin-top: 10px;
 }
 .search_detail_data_price_avg {
-  color: #9d76a9;
+  color: #ddeec7;
   font-weight: 500;
 }
 .search_detail_data_price_tag {
@@ -710,7 +753,7 @@ export default {
   justify-content: center;
 }
 .search_detail_data_area_min_max {
-  color: lightgreen;
+  color: rgb(127, 202, 127);
   font-weight: 500;
   display: flex;
   justify-content: center;
@@ -723,7 +766,8 @@ export default {
   margin-bottom: 10px;
   color: #cccccc;
   font-weight: 300;
-  border-bottom: 2px solid #333333;
+  border-bottom: 2px solid;
+  transition: border-color 0.4s;
 }
 .search_detail_list_tag {
   display: flex;
@@ -734,7 +778,8 @@ export default {
   display: flex;
   width: 100%;
   padding: 4px 0px;
-  border-bottom: 1px solid #444444;
+  border-bottom: 1px solid;
+  transition: border-color 0.4s;
 }
 .search_detail_list_tag_date {
   width: 25%;
@@ -766,14 +811,16 @@ export default {
   height: 310px;
   margin: 10px 0px;
   padding: 10px 0px;
-  border-bottom: 2px solid #333333;
+  border-bottom: 2px solid;
+  transition: border-color 0.4s;
 }
 .direction_div {
   display: flex;
   flex-direction: column;
   padding: 10px 0px;
   width: 100%;
-  border-bottom: 2px solid #333333;
+  border-bottom: 2px solid;
+  transition: border-color 0.4s;
 }
 .direction_title {
   font-size: 16px;
@@ -818,7 +865,7 @@ export default {
   font-size: 24px;
   display: flex;
   border-radius: 30px;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.4);
   margin-right: 5px;
   color: #fa880b;
   font-weight: 500;

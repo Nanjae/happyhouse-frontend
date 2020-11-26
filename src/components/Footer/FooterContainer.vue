@@ -1,7 +1,26 @@
 <template>
   <div>
-    <div class="wrapper">
-      <div class="footer_logo_div"><common-logo></common-logo></div>
+    <div
+      class="wrapper"
+      v-bind:style="{
+        backgroundColor: getBgColor,
+      }"
+    >
+      <div class="footer_logo_div">
+        <img
+          class="common_menu_logo_img1"
+          src="../../assets/demologo1.png"
+          v-bind:style="{
+            opacity: getBgOpacity1,
+          }"
+        /><img
+          class="common_menu_logo_img2"
+          src="../../assets/demologo2.png"
+          v-bind:style="{
+            opacity: getBgOpacity2,
+          }"
+        />
+      </div>
       <div class="footer_content_div">
         <div class="footer_content_top">
           <div class="footer_content_top_left">
@@ -14,7 +33,7 @@
             <div class="footer_content_contact">Follow us on</div>
           </div>
         </div>
-        <div class="footer_content_bottom">
+        <div class="footer_content_bottom" v-bind:style="{ color: getColor }">
           <div class="footer_content_copyright">
             Copyright © 2020 SSAFY 4기 서울 4반 [ 박유진 & 이재욱 ]
           </div>
@@ -25,15 +44,33 @@
 </template>
 
 <script>
-import CommonLogo from "../Common/CommonLogo.vue";
-export default { components: { CommonLogo } };
+export default {
+  computed: {
+    getBgOpacity1() {
+      return this.$store.getters.getSearchTypeOption == "1" ? "1" : "0";
+    },
+    getBgOpacity2() {
+      return this.$store.getters.getSearchTypeOption == "2" ? "1" : "0";
+    },
+    getBgColor() {
+      return this.$store.getters.getSearchTypeOption == "1"
+        ? "#464646"
+        : "#2368c7";
+    },
+    getColor() {
+      return this.$store.getters.getSearchTypeOption == "1"
+        ? "#888888"
+        : "#bbbbbb";
+    },
+  },
+};
 </script>
 
 <style scoped>
 .wrapper {
   display: flex;
-  background-color: #464646;
   padding: 30px;
+  transition: background-color 0.4s;
 }
 .footer_logo_div {
   display: flex;
@@ -42,6 +79,7 @@ export default { components: { CommonLogo } };
   min-width: 180px;
   margin-right: 10px;
   border-right: 1px solid #888888;
+  position: relative;
 }
 .footer_content_div {
   display: flex;
@@ -71,6 +109,21 @@ export default { components: { CommonLogo } };
   margin-left: 30px;
 }
 .footer_content_bottom {
-  color: #888888;
+  transition: color 0.4s;
+}
+.common_menu_logo_img1 {
+  position: absolute;
+  min-width: 240px;
+  width: 240px;
+  object-fit: contain;
+  margin-right: 20px;
+  transition: opacity 0.4s;
+}
+.common_menu_logo_img2 {
+  min-width: 240px;
+  width: 240px;
+  object-fit: contain;
+  margin-right: 20px;
+  transition: opacity 0.4s;
 }
 </style>

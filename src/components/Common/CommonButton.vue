@@ -95,7 +95,7 @@ export default {
   transition: color 0.4s;
 }
 .header_btn_bg {
-  z-index: -5;
+  z-index: 0;
   position: absolute;
   background-color: white;
   border-radius: 20px;

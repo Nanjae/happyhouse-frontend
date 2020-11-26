@@ -88,7 +88,7 @@ export default {
   transition: opacity 1.2s;
 }
 .feature_bg_img {
-  z-index: -10;
+  z-index: 0;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -96,7 +96,7 @@ export default {
   object-position: center;
 }
 .feature_bg_opacity {
-  z-index: -5;
+  z-index: 1;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -104,15 +104,18 @@ export default {
   transition: opacity 0.4s;
 }
 .feature_left_div {
+  z-index: 2;
   width: 300px;
   height: 70%;
 }
 .feature_center_div {
+  z-index: 2;
   width: 300px;
   height: 70%;
   margin: 0px 100px;
 }
 .feature_right_div {
+  z-index: 2;
   width: 300px;
   height: 70%;
 }

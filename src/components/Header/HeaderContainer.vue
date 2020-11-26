@@ -1,10 +1,33 @@
 <template>
   <div>
     <div class="wrapper">
-      <div class="header_bg_gradient_div" />
+      <div
+        class="header_bg_gradient_div_1"
+        v-bind:style="{
+          opacity: getBgOpacity1,
+        }"
+      />
+      <div
+        class="header_bg_gradient_div_2"
+        v-bind:style="{
+          opacity: getBgOpacity2,
+        }"
+      />
       <div class="header_menu_div">
         <div v-on:click="moveHome" class="common_menu_logo">
-          <img class="common_menu_logo_img" src="../../assets/demologo.png" />
+          <img
+            class="common_menu_logo_img1"
+            src="../../assets/demologo1.png"
+            v-bind:style="{
+              opacity: getBgOpacity1,
+            }"
+          /><img
+            class="common_menu_logo_img2"
+            src="../../assets/demologo2.png"
+            v-bind:style="{
+              opacity: getBgOpacity2,
+            }"
+          />
         </div>
         <div class="header_menu_button_div">
           <div class="header_menu_button_div_left">
@@ -258,6 +281,12 @@ export default {
     },
   },
   computed: {
+    getBgOpacity1() {
+      return this.$store.getters.getSearchTypeOption == "1" ? "1" : "0";
+    },
+    getBgOpacity2() {
+      return this.$store.getters.getSearchTypeOption == "2" ? "1" : "0";
+    },
     getHeight() {
       return this.style.height + "px";
     },
@@ -312,12 +341,21 @@ export default {
   font-weight: 700;
   font-size: 14px;
 }
-.header_bg_gradient_div {
+.header_bg_gradient_div_1 {
   position: absolute;
   z-index: -10;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, #464646, #292929 230px);
+  transition: opacity 0.4s;
+  background: linear-gradient(to bottom, #5a5a5a, #292929 230px);
+}
+.header_bg_gradient_div_2 {
+  position: absolute;
+  z-index: -10;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.4s;
+  background: linear-gradient(to bottom, #458ae9, #2750aa 230px);
 }
 .header_menu_div {
   position: relative;
@@ -453,6 +491,7 @@ export default {
   transition: background-image 0.4s;
 }
 .common_menu_logo {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -466,9 +505,18 @@ export default {
   /* background-color: rgba(0, 0, 0, 0.5); */
 }
 .common_menu_logo_img {
+  position: absolute;
   width: 180px;
-  object-fit: contain;
+  object-fit: cover;
   margin-left: 8px;
   margin-top: 1px;
+  transition: opacity 0.4s;
+}
+.common_menu_logo_img2 {
+  width: 180px;
+  object-fit: cover;
+  margin-left: 8px;
+  margin-top: 1px;
+  transition: opacity 0.4s;
 }
 </style>

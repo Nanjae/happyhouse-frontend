@@ -22,68 +22,14 @@
           </div>
           <div class="right_div">
             <div
+              v-for="(n, index) of topSearchData"
+              :key="n.index"
               class="content_box"
-              v-on:click="
-                openNewPage(
-                  'https://land.naver.com/news/newsRead.nhn?type=headline&bss_ymd=&prsco_id=629&arti_id=0000054247'
-                )
-              "
+              v-on:click="openNewPage(n.url)"
             >
-              <div class="index_number">1</div>
+              <div class="index_number">{{ index + 1 }}</div>
               <div class="content_text">
-                서울 집값 기본 10억 원 시대'…종부세 기준 9억 원→12억 원 바뀔까
-              </div>
-            </div>
-            <div
-              class="content_box"
-              v-on:click="
-                openNewPage(
-                  'https://land.naver.com/news/newsRead.nhn?type=headline&bss_ymd=&prsco_id=421&arti_id=0005010840'
-                )
-              "
-            >
-              <div class="index_number">2</div>
-              <div class="content_text">
-                임대차3법에 대비하나…'분쟁조정위'늘리고, 85억원 예산도 배정
-              </div>
-            </div>
-            <div
-              class="content_box"
-              v-on:click="
-                openNewPage(
-                  'https://land.naver.com/news/newsRead.nhn?type=headline&bss_ymd=&prsco_id=023&arti_id=0003578607'
-                )
-              "
-            >
-              <div class="index_number">3</div>
-              <div class="content_text">
-                좁아도 너무 좁다, 신혼 매입임대 80%가 36㎡ 안돼
-              </div>
-            </div>
-            <div
-              class="content_box"
-              v-on:click="
-                openNewPage(
-                  'https://land.naver.com/news/newsRead.nhn?type=headline&bss_ymd=&prsco_id=023&arti_id=0003578584'
-                )
-              "
-            >
-              <div class="index_number">4</div>
-              <div class="content_text">
-                “최대 6억 매입”→“평균 6억 매입” 말바꾸기… 빌라값도 들쑤시는...
-              </div>
-            </div>
-            <div
-              class="content_box"
-              v-on:click="
-                openNewPage(
-                  'https://land.naver.com/news/newsRead.nhn?type=headline&bss_ymd=&prsco_id=005&arti_id=0001384336'
-                )
-              "
-            >
-              <div class="index_number">5</div>
-              <div class="content_text">
-                종부세 ‘폭탄’ 날아왔지만… ‘버티기’ 계속될 듯
+                {{ n.title }}
               </div>
             </div>
           </div>
@@ -95,6 +41,7 @@
 
 <script>
 import { predataTop10 } from "../../predata.js";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -112,6 +59,20 @@ export default {
     },
   },
   methods: {
+    getNewsData() {
+      return new Promise((resolve) => {
+        const url =
+          "http://125.186.79.71:8080/happyhouse_spring_boot/api/allNews";
+        axios
+          .get(url)
+          .then(function(response) {
+            resolve(response.data);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+    },
     openNewPage(link) {
       window.open(link);
     },
@@ -120,7 +81,8 @@ export default {
       return this.number;
     },
     setSearchData(data) {
-      this.topSearchData = JSON.parse(JSON.stringify(data.splice(0, 5)));
+      this.topSearchData = JSON.parse(JSON.stringify(data));
+      console.log(this.topSearchData);
     },
     getSearchData() {
       return new Promise((resolve) => {
@@ -135,7 +97,8 @@ export default {
     },
   },
   mounted() {
-    this.getSearchData().then((result) => {
+    this.getNewsData().then((result) => {
+      console.log(result);
       console.log("탑10 데이터 가져오기 완료!");
       this.setSearchData(result);
     });
@@ -188,6 +151,8 @@ export default {
 }
 .content_text {
   font-weight: 500;
+  display: block;
+  max-width: 550px;
 }
 .more_button {
   margin-top: 20px;
