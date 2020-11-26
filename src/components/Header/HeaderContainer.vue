@@ -498,13 +498,14 @@ export default {
   width: 140px;
   height: 40px;
   margin-right: 20px;
+  margin-left: 5px;
   /* border: 2px solid #d38fff; */
   border-radius: 12px;
   color: #d38fff;
   cursor: pointer;
   /* background-color: rgba(0, 0, 0, 0.5); */
 }
-.common_menu_logo_img {
+.common_menu_logo_img1 {
   position: absolute;
   width: 180px;
   object-fit: cover;
